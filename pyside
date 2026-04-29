@@ -1,0 +1,70 @@
+import sys
+from PySide6.QtWidgets import (
+    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QPushButton, QTextEdit, QGraphicsView, QGraphicsScene
+)
+from PySide6.QtGui import QPen, QBrush, QColor
+from PySide6.QtCore import Qt
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("PySide6 示例界面")
+        self.setGeometry(100, 100, 800, 600)  # 窗口位置和大小
+
+        # 1. 主布局（垂直布局）
+        main_widget = QWidget()
+        self.setCentralWidget(main_widget)
+        main_layout = QVBoxLayout(main_widget)
+
+        # 2. 按钮区（水平布局）
+        button_layout = QHBoxLayout()
+        self.btn_draw = QPushButton("绘制图形")
+        self.btn_clear = QPushButton("清空")
+        self.btn_draw.clicked.connect(self.draw_shape)
+        self.btn_clear.clicked.connect(self.clear_all)
+        button_layout.addWidget(self.btn_draw)
+        button_layout.addWidget(self.btn_clear)
+        main_layout.addLayout(button_layout)
+
+        # 3. 信息显示框（文本框）
+        self.info_box = QTextEdit()
+        self.info_box.setPlaceholderText("这里显示信息...")
+        self.info_box.setReadOnly(True)  # 只读模式
+        main_layout.addWidget(self.info_box)
+
+        # 4. 图形显示框（QGraphicsView）
+        self.graphics_view = QGraphicsView()
+        self.graphics_scene = QGraphicsScene()
+        self.graphics_view.setScene(self.graphics_scene)
+        main_layout.addWidget(self.graphics_view)
+
+    def draw_shape(self):
+        """在图形框中绘制一个圆形和矩形"""
+        # 清空旧内容
+        self.graphics_scene.clear()
+
+        # 绘制矩形
+        rect_pen = QPen(Qt.blue, 3)
+        rect_brush = QBrush(QColor(100, 150, 255, 150))
+        self.graphics_scene.addRect(50, 50, 100, 100, rect_pen, rect_brush)
+
+        # 绘制圆形
+        circle_pen = QPen(Qt.red, 3)
+        circle_brush = QBrush(QColor(255, 100, 100, 150))
+        self.graphics_scene.addEllipse(200, 50, 100, 100, circle_pen, circle_brush)
+
+        # 在信息框中输出信息
+        self.info_box.append("已绘制：蓝色矩形 和 红色圆形")
+
+    def clear_all(self):
+        """清空图形框和信息框"""
+        self.graphics_scene.clear()
+        self.info_box.clear()
+        self.info_box.append("已清空所有内容")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
